@@ -1,6 +1,7 @@
 package apex
 
 import (
+	"context"
 	"testing"
 
 	log "github.com/unistack-org/micro/v3/logger"
@@ -15,11 +16,11 @@ func TestName(t *testing.T) {
 }
 
 func testLog(l log.Logger) {
-	l.Infof("Test Logf with level: %s", "info")
-	l.Debugf("Test Logf with level: %s", "debug")
-	l.Errorf("Test Logf with level: %s", "error")
-	l.Tracef("Test Logf with level: %s", "trace")
-	l.Warnf("Test Logf with level: %s", "warn")
+	l.Infof(context.TODO(), "Test Logf with level: %s", "info")
+	l.Debugf(context.TODO(), "Test Logf with level: %s", "debug")
+	l.Errorf(context.TODO(), "Test Logf with level: %s", "error")
+	l.Tracef(context.TODO(), "Test Logf with level: %s", "trace")
+	l.Warnf(context.TODO(), "Test Logf with level: %s", "warn")
 }
 
 func TestJSON(t *testing.T) {
@@ -45,10 +46,10 @@ func TestCLI(t *testing.T) {
 
 func TestWithLevel(t *testing.T) {
 	l2 := NewLogger(WithTextHandler(), WithLevel(log.DebugLevel))
-	l2.Debugf("test show debug: %s", "debug msg")
+	l2.Debugf(context.TODO(), "test show debug: %s", "debug msg")
 
 	l3 := NewLogger(WithTextHandler(), WithLevel(log.InfoLevel))
-	l3.Debugf("test non-show debug: %s", "debug msg")
+	l3.Debugf(context.TODO(), "test non-show debug: %s", "debug msg")
 }
 
 func TestWithFields(t *testing.T) {
@@ -56,5 +57,5 @@ func TestWithFields(t *testing.T) {
 		"k1": "v1",
 		"k2": 123456,
 	})
-	l2.Info("Testing with values")
+	l2.Info(context.TODO(), "Testing with values")
 }

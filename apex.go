@@ -1,6 +1,9 @@
 package apex
 
 import (
+	"context"
+	"fmt"
+
 	apexLog "github.com/apex/log"
 	"github.com/unistack-org/micro/v3/logger"
 )
@@ -37,7 +40,7 @@ func (l *apex) Init(opts ...logger.Option) error {
 		}
 
 		if lvl, ok := options.Context.Value(levelKey{}).(logger.Level); ok {
-			l.setLogLevel(lvl)
+			l.SetLevel(lvl)
 		}
 	}
 
@@ -49,63 +52,83 @@ func (l *apex) Options() logger.Options {
 	return l.opts.Options
 }
 
-func (l *apex) setLogLevel(level logger.Level) {
+func (l *apex) SetLevel(level logger.Level) {
 	apexLog.SetLevel(convertToApexLevel(level))
 }
 
-func (l *apex) Debug(args ...interface{}) {
-	l.logf(logger.DebugLevel, "%s", args)
+func (l *apex) Debug(ctx context.Context, args ...interface{}) {
+	l.Logf(ctx, logger.DebugLevel, "%s", args)
 }
 
-func (l *apex) Debugf(format string, args ...interface{}) {
-	l.logf(logger.DebugLevel, format, args)
+func (l *apex) Debugf(ctx context.Context, format string, args ...interface{}) {
+	l.Logf(ctx, logger.DebugLevel, format, args)
 }
 
-func (l *apex) Error(args ...interface{}) {
-	l.logf(logger.ErrorLevel, "%s", args)
+func (l *apex) Error(ctx context.Context, args ...interface{}) {
+	l.Logf(ctx, logger.ErrorLevel, "%s", args)
 }
 
-func (l *apex) Errorf(format string, args ...interface{}) {
-	l.logf(logger.ErrorLevel, format, args)
+func (l *apex) Errorf(ctx context.Context, format string, args ...interface{}) {
+	l.Logf(ctx, logger.ErrorLevel, format, args)
 }
 
-func (l *apex) Info(args ...interface{}) {
-	l.logf(logger.InfoLevel, "%s", args)
+func (l *apex) Info(ctx context.Context, args ...interface{}) {
+	l.Logf(ctx, logger.InfoLevel, "%s", args)
 }
 
-func (l *apex) Infof(format string, args ...interface{}) {
-	l.logf(logger.InfoLevel, format, args)
+func (l *apex) Infof(ctx context.Context, format string, args ...interface{}) {
+	l.Logf(ctx, logger.InfoLevel, format, args)
 }
 
-func (l *apex) Fatal(args ...interface{}) {
-	l.logf(logger.FatalLevel, "%s", args)
+func (l *apex) Fatal(ctx context.Context, args ...interface{}) {
+	l.Logf(ctx, logger.FatalLevel, "%s", args)
 }
 
-func (l *apex) Fatalf(format string, args ...interface{}) {
-	l.logf(logger.FatalLevel, format, args)
+func (l *apex) Fatalf(ctx context.Context, format string, args ...interface{}) {
+	l.Logf(ctx, logger.FatalLevel, format, args)
 }
-func (l *apex) Trace(args ...interface{}) {
-	l.logf(logger.TraceLevel, "%s", args)
-}
-
-func (l *apex) Tracef(format string, args ...interface{}) {
-	l.logf(logger.TraceLevel, format, args)
-}
-func (l *apex) Warn(args ...interface{}) {
-	l.logf(logger.WarnLevel, "%s", args)
+func (l *apex) Trace(ctx context.Context, args ...interface{}) {
+	l.Logf(ctx, logger.TraceLevel, "%s", args)
 }
 
-func (l *apex) Warnf(format string, args ...interface{}) {
-	l.logf(logger.WarnLevel, format, args)
+func (l *apex) Tracef(ctx context.Context, format string, args ...interface{}) {
+	l.Logf(ctx, logger.TraceLevel, format, args)
+}
+func (l *apex) Warn(ctx context.Context, args ...interface{}) {
+	l.Logf(ctx, logger.WarnLevel, "%s", args)
+}
+
+func (l *apex) Warnf(ctx context.Context, format string, args ...interface{}) {
+	l.Logf(ctx, logger.WarnLevel, format, args)
 }
 
 func (l *apex) V(level logger.Level) bool {
 	return l.opts.Level >= level
 }
 
-// Logf insets a log entry.  Arguments are handled in the manner of
-// fmt.Printf.
-func (l *apex) logf(level logger.Level, format string, v ...interface{}) {
+// Log insets a log entry.  Arguments are handled in the manner of fmt.Printf
+func (l *apex) Log(ctx context.Context, level logger.Level, v ...interface{}) {
+	format := ""
+	for i := 0; i < len(v); i++ {
+		format += " %v"
+	}
+	apexlevel := convertToApexLevel(level)
+	switch apexlevel {
+	case apexLog.FatalLevel:
+		l.Interface.Fatal(fmt.Sprintf(format, v...))
+	case apexLog.ErrorLevel:
+		l.Interface.Error(fmt.Sprintf(format, v...))
+	case apexLog.WarnLevel:
+		l.Interface.Warn(fmt.Sprintf(format, v...))
+	case apexLog.DebugLevel:
+		l.Interface.Debug(fmt.Sprintf(format, v...))
+	default:
+		l.Interface.Info(fmt.Sprintf(format, v...))
+	}
+}
+
+// Logf insets a log entry.  Arguments are handled in the manner of fmt.Printf
+func (l *apex) Logf(ctx context.Context, level logger.Level, format string, v ...interface{}) {
 	apexlevel := convertToApexLevel(level)
 	switch apexlevel {
 	case apexLog.FatalLevel:

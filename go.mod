@@ -1,10 +1,8 @@
-module github.com/micro/go-plugins/logger/apex/v2
+module github.com/unistack-org/micro-logger-apex
 
-go 1.13
+go 1.14
 
 require (
 	github.com/apex/log v1.1.2
-	github.com/micro/go-micro/v2 v2.9.1-0.20200716153311-f9bf56239306
+	github.com/unistack-org/micro/v3 v3.0.2-0.20201129143054-8d6eb34aeeac
 )
-
-replace github.com/coreos/etcd => github.com/ozonru/etcd v3.3.20-grpc1.27-origmodule+incompatible

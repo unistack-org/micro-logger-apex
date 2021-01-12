@@ -110,6 +110,10 @@ func (l *apex) V(level logger.Level) bool {
 
 // Log insets a log entry.  Arguments are handled in the manner of fmt.Printf
 func (l *apex) Log(ctx context.Context, level logger.Level, v ...interface{}) {
+	if !l.V(level) {
+		return
+	}
+
 	apexlevel := convertToApexLevel(level)
 	switch apexlevel {
 	case apexLog.FatalLevel:
@@ -127,6 +131,10 @@ func (l *apex) Log(ctx context.Context, level logger.Level, v ...interface{}) {
 
 // Logf insets a log entry.  Arguments are handled in the manner of fmt.Printf
 func (l *apex) Logf(ctx context.Context, level logger.Level, format string, v ...interface{}) {
+	if !l.V(level) {
+		return
+	}
+
 	apexlevel := convertToApexLevel(level)
 	switch apexlevel {
 	case apexLog.FatalLevel:

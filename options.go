@@ -1,8 +1,6 @@
 package apex
 
 import (
-	"context"
-
 	apexLog "github.com/apex/log"
 	"github.com/apex/log/handlers/cli"
 	"github.com/apex/log/handlers/json"
@@ -13,26 +11,21 @@ import (
 type handlerKey struct{}
 type levelKey struct{}
 
-// Options is used when applying custom options
-type Options struct {
-	logger.Options
-}
-
 type loggerKey struct{}
 
 // WithLogger sets the logger
 func WithLogger(l apexLog.Interface) logger.Option {
-	return setOption(loggerKey{}, l)
+	return logger.SetOption(loggerKey{}, l)
 }
 
 // WithLevel allows to set the level for Log Output
 func WithLevel(level logger.Level) logger.Option {
-	return setOption(levelKey{}, level)
+	return logger.SetOption(levelKey{}, level)
 }
 
 // WithHandler allows to set a customHandler for Log Output
 func WithHandler(handler apexLog.Handler) logger.Option {
-	return setOption(handlerKey{}, handler)
+	return logger.SetOption(handlerKey{}, handler)
 }
 
 // WithTextHandler sets the Text Handler for Log Output
@@ -48,13 +41,4 @@ func WithJSONHandler() logger.Option {
 // WithCLIHandler sets the CLI Handler for Log Output
 func WithCLIHandler() logger.Option {
 	return WithHandler(cli.Default)
-}
-
-func setOption(k, v interface{}) logger.Option {
-	return func(o *logger.Options) {
-		if o.Context == nil {
-			o.Context = context.Background()
-		}
-		o.Context = context.WithValue(o.Context, k, v)
-	}
 }

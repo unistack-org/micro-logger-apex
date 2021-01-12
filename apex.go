@@ -10,7 +10,7 @@ import (
 
 type apex struct {
 	apexLog.Interface
-	opts Options
+	opts logger.Options
 }
 
 // Fields set fields to always be logged
@@ -19,27 +19,26 @@ func (l *apex) Fields(fields map[string]interface{}) logger.Logger {
 	for k, v := range fields {
 		data[k] = v
 	}
-	return newLogger(l.WithFields(data))
+	return newLogger(l.WithFields(data), l.opts)
 }
 
 // Init initializes options
 func (l *apex) Init(opts ...logger.Option) error {
-	options := &Options{}
 	for _, o := range opts {
-		o(&options.Options)
+		o(&l.opts)
 	}
 
-	if options.Context != nil {
-		if al, ok := options.Context.Value(loggerKey{}).(apexLog.Interface); ok {
+	if l.opts.Context != nil {
+		if al, ok := l.opts.Context.Value(loggerKey{}).(apexLog.Interface); ok {
 			l.Interface = al
 			return nil
 		}
 
-		if h, ok := options.Context.Value(handlerKey{}).(apexLog.Handler); ok {
+		if h, ok := l.opts.Context.Value(handlerKey{}).(apexLog.Handler); ok {
 			apexLog.SetHandler(h)
 		}
 
-		if lvl, ok := options.Context.Value(levelKey{}).(logger.Level); ok {
+		if lvl, ok := l.opts.Context.Value(levelKey{}).(logger.Level); ok {
 			l.setLevel(lvl)
 		}
 	}
@@ -48,8 +47,7 @@ func (l *apex) Init(opts ...logger.Option) error {
 }
 
 func (l *apex) Options() logger.Options {
-	// FIXME: How to return full opts?
-	return l.opts.Options
+	return l.opts
 }
 
 func (l *apex) setLevel(level logger.Level) {
@@ -155,21 +153,18 @@ func (l *apex) String() string {
 	return "apex"
 }
 
-func newLogger(logInstance apexLog.Interface) logger.Logger {
+func newLogger(logInstance apexLog.Interface, opts logger.Options) logger.Logger {
 	return &apex{
 		Interface: logInstance,
-		opts: Options{
-			logger.Options{
-				Level: logger.InfoLevel,
-			},
-		},
+		opts:      opts,
 	}
 }
 
 // New returns a new ApexLogger instance
 func NewLogger(opts ...logger.Option) logger.Logger {
-	l := newLogger(apexLog.Log)
-	_ = l.Init(opts...)
+	options := logger.NewOptions(opts...)
+	l := newLogger(apexLog.Log, options)
+	_ = l.Init()
 	return l
 }
 

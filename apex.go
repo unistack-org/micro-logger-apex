@@ -57,7 +57,7 @@ func (l *apex) setLevel(level logger.Level) {
 }
 
 func (l *apex) Debug(ctx context.Context, args ...interface{}) {
-	l.Logf(ctx, logger.DebugLevel, "%s", args)
+	l.Log(ctx, logger.DebugLevel, args...)
 }
 
 func (l *apex) Debugf(ctx context.Context, format string, args ...interface{}) {
@@ -65,7 +65,7 @@ func (l *apex) Debugf(ctx context.Context, format string, args ...interface{}) {
 }
 
 func (l *apex) Error(ctx context.Context, args ...interface{}) {
-	l.Logf(ctx, logger.ErrorLevel, "%s", args)
+	l.Log(ctx, logger.ErrorLevel, args...)
 }
 
 func (l *apex) Errorf(ctx context.Context, format string, args ...interface{}) {
@@ -73,7 +73,7 @@ func (l *apex) Errorf(ctx context.Context, format string, args ...interface{}) {
 }
 
 func (l *apex) Info(ctx context.Context, args ...interface{}) {
-	l.Logf(ctx, logger.InfoLevel, "%s", args)
+	l.Log(ctx, logger.InfoLevel, args...)
 }
 
 func (l *apex) Infof(ctx context.Context, format string, args ...interface{}) {
@@ -81,21 +81,23 @@ func (l *apex) Infof(ctx context.Context, format string, args ...interface{}) {
 }
 
 func (l *apex) Fatal(ctx context.Context, args ...interface{}) {
-	l.Logf(ctx, logger.FatalLevel, "%s", args)
+	l.Log(ctx, logger.FatalLevel, args...)
 }
 
 func (l *apex) Fatalf(ctx context.Context, format string, args ...interface{}) {
 	l.Logf(ctx, logger.FatalLevel, format, args)
 }
+
 func (l *apex) Trace(ctx context.Context, args ...interface{}) {
-	l.Logf(ctx, logger.TraceLevel, "%s", args)
+	l.Log(ctx, logger.TraceLevel, args...)
 }
 
 func (l *apex) Tracef(ctx context.Context, format string, args ...interface{}) {
 	l.Logf(ctx, logger.TraceLevel, format, args)
 }
+
 func (l *apex) Warn(ctx context.Context, args ...interface{}) {
-	l.Logf(ctx, logger.WarnLevel, "%s", args)
+	l.Log(ctx, logger.WarnLevel, args...)
 }
 
 func (l *apex) Warnf(ctx context.Context, format string, args ...interface{}) {
@@ -108,22 +110,18 @@ func (l *apex) V(level logger.Level) bool {
 
 // Log insets a log entry.  Arguments are handled in the manner of fmt.Printf
 func (l *apex) Log(ctx context.Context, level logger.Level, v ...interface{}) {
-	format := ""
-	for i := 0; i < len(v); i++ {
-		format += " %v"
-	}
 	apexlevel := convertToApexLevel(level)
 	switch apexlevel {
 	case apexLog.FatalLevel:
-		l.Interface.Fatal(fmt.Sprintf(format, v...))
+		l.Interface.Fatal(fmt.Sprint(v...))
 	case apexLog.ErrorLevel:
-		l.Interface.Error(fmt.Sprintf(format, v...))
+		l.Interface.Error(fmt.Sprint(v...))
 	case apexLog.WarnLevel:
-		l.Interface.Warn(fmt.Sprintf(format, v...))
+		l.Interface.Warn(fmt.Sprint(v...))
 	case apexLog.DebugLevel:
-		l.Interface.Debug(fmt.Sprintf(format, v...))
+		l.Interface.Debug(fmt.Sprint(v...))
 	default:
-		l.Interface.Info(fmt.Sprintf(format, v...))
+		l.Interface.Info(fmt.Sprint(v...))
 	}
 }
 

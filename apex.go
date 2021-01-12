@@ -164,7 +164,6 @@ func newLogger(logInstance apexLog.Interface, opts logger.Options) logger.Logger
 func NewLogger(opts ...logger.Option) logger.Logger {
 	options := logger.NewOptions(opts...)
 	l := newLogger(apexLog.Log, options)
-	_ = l.Init()
 	return l
 }
 

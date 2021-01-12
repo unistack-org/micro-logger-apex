@@ -9,6 +9,7 @@ import (
 
 func TestName(t *testing.T) {
 	l2 := NewLogger(WithTextHandler())
+	l2.Init()
 	if l2.String() != "apex" {
 		t.Errorf("name is error %s", l2.String())
 	}
@@ -27,6 +28,7 @@ func TestJSON(t *testing.T) {
 	l2 := NewLogger(WithJSONHandler(), WithLevel(log.TraceLevel)).Fields(map[string]interface{}{
 		"Format": "JSON",
 	})
+	l2.Init()
 	testLog(l2)
 }
 
@@ -34,6 +36,7 @@ func TestText(t *testing.T) {
 	l2 := NewLogger(WithTextHandler(), WithLevel(log.TraceLevel)).Fields(map[string]interface{}{
 		"Format": "Text",
 	})
+	l2.Init()
 	testLog(l2)
 }
 
@@ -41,14 +44,17 @@ func TestCLI(t *testing.T) {
 	l2 := NewLogger(WithCLIHandler(), WithLevel(log.TraceLevel)).Fields(map[string]interface{}{
 		"Format": "CLI",
 	})
+	l2.Init()
 	testLog(l2)
 }
 
 func TestWithLevel(t *testing.T) {
 	l2 := NewLogger(WithTextHandler(), WithLevel(log.DebugLevel))
+	l2.Init()
 	l2.Debugf(context.TODO(), "test show debug: %s", "debug msg")
 
 	l3 := NewLogger(WithTextHandler(), WithLevel(log.InfoLevel))
+	l3.Init()
 	l3.Debugf(context.TODO(), "test non-show debug: %s", "debug msg")
 }
 
@@ -57,5 +63,6 @@ func TestWithFields(t *testing.T) {
 		"k1": "v1",
 		"k2": 123456,
 	})
+	l2.Init()
 	l2.Info(context.TODO(), "Testing with values")
 }

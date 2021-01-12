@@ -40,7 +40,7 @@ func (l *apex) Init(opts ...logger.Option) error {
 		}
 
 		if lvl, ok := options.Context.Value(levelKey{}).(logger.Level); ok {
-			l.SetLevel(lvl)
+			l.setLevel(lvl)
 		}
 	}
 
@@ -52,7 +52,7 @@ func (l *apex) Options() logger.Options {
 	return l.opts.Options
 }
 
-func (l *apex) SetLevel(level logger.Level) {
+func (l *apex) setLevel(level logger.Level) {
 	apexLog.SetLevel(convertToApexLevel(level))
 }
 

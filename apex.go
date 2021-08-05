@@ -14,10 +14,10 @@ type apex struct {
 }
 
 // Fields set fields to always be logged
-func (l *apex) Fields(fields map[string]interface{}) logger.Logger {
+func (l *apex) Fields(fields ...interface{}) logger.Logger {
 	data := make(apexLog.Fields, len(fields))
-	for k, v := range fields {
-		data[k] = v
+	for i := 0; i < len(fields); i += 2 {
+		data[fields[i].(string)] = fields[i+1]
 	}
 	return newLogger(l.WithFields(data), l.opts)
 }

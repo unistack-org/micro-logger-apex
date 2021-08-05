@@ -25,25 +25,19 @@ func testLog(l log.Logger) {
 }
 
 func TestJSON(t *testing.T) {
-	l2 := NewLogger(WithJSONHandler(), WithLevel(log.TraceLevel)).Fields(map[string]interface{}{
-		"Format": "JSON",
-	})
+	l2 := NewLogger(WithJSONHandler(), WithLevel(log.TraceLevel)).Fields("Format", "JSON")
 	l2.Init()
 	testLog(l2)
 }
 
 func TestText(t *testing.T) {
-	l2 := NewLogger(WithTextHandler(), WithLevel(log.TraceLevel)).Fields(map[string]interface{}{
-		"Format": "Text",
-	})
+	l2 := NewLogger(WithTextHandler(), WithLevel(log.TraceLevel)).Fields("Format", "Text")
 	l2.Init()
 	testLog(l2)
 }
 
 func TestCLI(t *testing.T) {
-	l2 := NewLogger(WithCLIHandler(), WithLevel(log.TraceLevel)).Fields(map[string]interface{}{
-		"Format": "CLI",
-	})
+	l2 := NewLogger(WithCLIHandler(), WithLevel(log.TraceLevel)).Fields("Format", "CLI")
 	l2.Init()
 	testLog(l2)
 }
@@ -59,10 +53,7 @@ func TestWithLevel(t *testing.T) {
 }
 
 func TestWithFields(t *testing.T) {
-	l2 := NewLogger(WithTextHandler()).Fields(map[string]interface{}{
-		"k1": "v1",
-		"k2": 123456,
-	})
+	l2 := NewLogger(WithTextHandler()).Fields("k1", "v1", "k2", 123456)
 	l2.Init()
 	l2.Info(context.TODO(), "Testing with values")
 }

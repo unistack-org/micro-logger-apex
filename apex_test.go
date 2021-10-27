@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	log "github.com/unistack-org/micro/v3/logger"
+	log "go.unistack.org/micro/v3/logger"
 )
 
 func TestName(t *testing.T) {

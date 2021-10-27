@@ -5,11 +5,13 @@ import (
 	"github.com/apex/log/handlers/cli"
 	"github.com/apex/log/handlers/json"
 	"github.com/apex/log/handlers/text"
-	"github.com/unistack-org/micro/v3/logger"
+	"go.unistack.org/micro/v3/logger"
 )
 
-type handlerKey struct{}
-type levelKey struct{}
+type (
+	handlerKey struct{}
+	levelKey   struct{}
+)
 
 type loggerKey struct{}
 

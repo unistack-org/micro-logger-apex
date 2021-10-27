@@ -1,11 +1,11 @@
-package apex
+package apex // import "go.unistack.org/micro-logger-apex/v3"
 
 import (
 	"context"
 	"fmt"
 
 	apexLog "github.com/apex/log"
-	"github.com/unistack-org/micro/v3/logger"
+	"go.unistack.org/micro/v3/logger"
 )
 
 type apex struct {
@@ -52,6 +52,38 @@ func (l *apex) Options() logger.Options {
 
 func (l *apex) setLevel(level logger.Level) {
 	apexLog.SetLevel(convertToApexLevel(level))
+}
+
+func (l *apex) Clone(opts ...logger.Option) logger.Logger {
+	nl := &apex{
+		Interface: l.Interface,
+		opts:      l.opts,
+	}
+
+	for _, o := range opts {
+		o(&nl.opts)
+	}
+
+	if nl.opts.Context != nil {
+		if al, ok := nl.opts.Context.Value(loggerKey{}).(apexLog.Interface); ok {
+			nl.Interface = al
+			return nil
+		}
+
+		if h, ok := nl.opts.Context.Value(handlerKey{}).(apexLog.Handler); ok {
+			apexLog.SetHandler(h)
+		}
+
+		if lvl, ok := nl.opts.Context.Value(levelKey{}).(logger.Level); ok {
+			nl.setLevel(lvl)
+		}
+	}
+
+	return nl
+}
+
+func (l *apex) Level(lvl logger.Level) {
+	l.setLevel(lvl)
 }
 
 func (l *apex) Debug(ctx context.Context, args ...interface{}) {

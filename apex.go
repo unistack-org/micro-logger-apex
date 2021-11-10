@@ -2,9 +2,13 @@ package apex // import "go.unistack.org/micro-logger-apex/v3"
 
 import (
 	"context"
+	j "encoding/json"
 	"fmt"
 
 	apexLog "github.com/apex/log"
+	"github.com/apex/log/handlers/cli"
+	"github.com/apex/log/handlers/json"
+	"github.com/apex/log/handlers/text"
 	"go.unistack.org/micro/v3/logger"
 )
 
@@ -40,6 +44,20 @@ func (l *apex) Init(opts ...logger.Option) error {
 
 		if lvl, ok := l.opts.Context.Value(levelKey{}).(logger.Level); ok {
 			l.setLevel(lvl)
+		}
+	}
+
+	switch li := l.Interface.(type) {
+	case *apexLog.Logger:
+		switch h := li.Handler.(type) {
+		case *text.Handler:
+			h.Writer = l.opts.Out
+		case *json.Handler:
+			h.Encoder = j.NewEncoder(l.opts.Out)
+		case *cli.Handler:
+			h.Writer = l.opts.Out
+		default:
+			li.Handler = json.New(l.opts.Out)
 		}
 	}
 

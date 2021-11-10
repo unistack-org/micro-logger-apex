@@ -1,11 +1,24 @@
 package apex
 
 import (
+	"bytes"
 	"context"
 	"testing"
 
-	log "go.unistack.org/micro/v3/logger"
+	"go.unistack.org/micro/v3/logger"
 )
+
+func TestOutput(t *testing.T) {
+	buf := bytes.NewBuffer(nil)
+	l := NewLogger(logger.WithOutput(buf))
+	if err := l.Init(); err != nil {
+		t.Fatal(err)
+	}
+	l.Infof(context.TODO(), "test logger name: %s", "name")
+	if !bytes.Contains(buf.Bytes(), []byte(`test logger name`)) {
+		t.Fatalf("log not redirected: %s", buf.Bytes())
+	}
+}
 
 func TestName(t *testing.T) {
 	l2 := NewLogger(WithTextHandler())
@@ -16,7 +29,7 @@ func TestName(t *testing.T) {
 	t.Logf("test logger name: %s", l2.String())
 }
 
-func testLog(l log.Logger) {
+func testLog(l logger.Logger) {
 	l.Infof(context.TODO(), "Test Logf with level: %s", "info")
 	l.Debugf(context.TODO(), "Test Logf with level: %s", "debug")
 	l.Errorf(context.TODO(), "Test Logf with level: %s", "error")
@@ -25,29 +38,29 @@ func testLog(l log.Logger) {
 }
 
 func TestJSON(t *testing.T) {
-	l2 := NewLogger(WithJSONHandler(), WithLevel(log.TraceLevel)).Fields("Format", "JSON")
+	l2 := NewLogger(WithJSONHandler(), WithLevel(logger.TraceLevel)).Fields("Format", "JSON")
 	l2.Init()
 	testLog(l2)
 }
 
 func TestText(t *testing.T) {
-	l2 := NewLogger(WithTextHandler(), WithLevel(log.TraceLevel)).Fields("Format", "Text")
+	l2 := NewLogger(WithTextHandler(), WithLevel(logger.TraceLevel)).Fields("Format", "Text")
 	l2.Init()
 	testLog(l2)
 }
 
 func TestCLI(t *testing.T) {
-	l2 := NewLogger(WithCLIHandler(), WithLevel(log.TraceLevel)).Fields("Format", "CLI")
+	l2 := NewLogger(WithCLIHandler(), WithLevel(logger.TraceLevel)).Fields("Format", "CLI")
 	l2.Init()
 	testLog(l2)
 }
 
 func TestWithLevel(t *testing.T) {
-	l2 := NewLogger(WithTextHandler(), WithLevel(log.DebugLevel))
+	l2 := NewLogger(WithTextHandler(), WithLevel(logger.DebugLevel))
 	l2.Init()
 	l2.Debugf(context.TODO(), "test show debug: %s", "debug msg")
 
-	l3 := NewLogger(WithTextHandler(), WithLevel(log.InfoLevel))
+	l3 := NewLogger(WithTextHandler(), WithLevel(logger.InfoLevel))
 	l3.Init()
 	l3.Debugf(context.TODO(), "test non-show debug: %s", "debug msg")
 }

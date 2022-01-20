@@ -4,5 +4,5 @@ go 1.16
 
 require (
 	github.com/apex/log v1.9.0
-	go.unistack.org/micro/v3 v3.8.14
+	go.unistack.org/micro/v3 v3.8.15
 )
